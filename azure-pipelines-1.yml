@@ -14,7 +14,7 @@ variables:
   imageRepository: 'test'
   containerRegistry: 'andreandrade.azurecr.io'
   dockerfilePath: 'image/Dockerfile'
-  tag: '$(Build.BuildId)'
+  tag: 'latest'
   system.debug: true
 
   # Agent VM image name
