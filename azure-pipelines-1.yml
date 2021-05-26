@@ -41,7 +41,7 @@ steps:
     repository: $(imageRepository)
     tags: |
       $(tag)
-    arguments: '--disable-content-trust=false'
+#    arguments: '--disable-content-trust=false'
 
 - task: Docker@2
   inputs: 
@@ -50,6 +50,6 @@ steps:
     repository: $(imageRepository)
     tags: |
       $(tag)
-    arguments: '--disable-content-trust=false'
+#    arguments: '--disable-content-trust=false'
   env:
     DOCKER_CONTENT_TRUST_REPOSITORY_PASSPHRASE: Passw0rd!
