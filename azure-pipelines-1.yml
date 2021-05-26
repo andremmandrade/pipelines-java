@@ -1,0 +1,55 @@
+# Docker
+# Build and push an image to Azure Container Registry
+# https://docs.microsoft.com/azure/devops/pipelines/languages/docker
+
+trigger:
+- master
+
+resources:
+- repo: self
+
+variables:
+  # Container registry service connection established during pipeline creation
+  dockerRegistryServiceConnection: '7cb11741-f734-48ae-959b-44009ae8c9cc'
+  imageRepository: 'nginx'
+  containerRegistry: 'andreandrade.azurecr.io'
+  dockerfilePath: '**/Dockerfile'
+  tag: '$(Build.BuildId)'
+  system.debug: true
+
+  # Agent VM image name
+  vmImageName: 'ubuntu-latest'
+
+steps:
+- task: Docker@2
+  inputs:
+    command: login
+    containerRegistry: $(dockerRegistryServiceConnection)
+
+- task: DownloadSecureFile@1
+  name: privateKey
+  inputs:
+    secureFile: azure-pipe.pub
+- script: |
+    mkdir -p $(DOCKER_CONFIG)/trust/private
+    cp $(privateKey.secureFilePath) $(DOCKER_CONFIG)/trust/private
+- task: Docker@2
+  inputs:
+    command: build
+    Dockerfile: $(dockerfilePath)
+    containerRegistry: $(dockerRegistryServiceConnection)
+    repository: $(imageRepository)
+    tags: |
+      $(tag)
+    arguments: '--disable-content-trust=false'
+
+- task: Docker@2
+  inputs: 
+    command: push
+    containerRegistry: $(dockerRegistryServiceConnection)
+    repository: $(imageRepository)
+    tags: |
+      $(tag)
+    arguments: '--disable-content-trust=false'
+  env:
+    DOCKER_CONTENT_TRUST_REPOSITORY_PASSPHRASE: Passw0rd!
