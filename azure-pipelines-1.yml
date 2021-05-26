@@ -13,7 +13,7 @@ variables:
   dockerRegistryServiceConnection: '7cb11741-f734-48ae-959b-44009ae8c9cc'
   imageRepository: 'nginx'
   containerRegistry: 'andreandrade.azurecr.io'
-  dockerfilePath: '**/Dockerfile'
+  dockerfilePath: 'image/Dockerfile'
   tag: '$(Build.BuildId)'
   system.debug: true
 
