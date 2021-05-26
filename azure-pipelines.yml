@@ -1,0 +1,51 @@
+# Maven
+# Build your Java project and run tests with Apache Maven.
+# Add steps that analyze code, save build artifacts, deploy, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/java
+
+trigger:
+- master
+
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+  system.debug: true
+  containerRegistryServiceConnection: andreandrade-pull
+  imageRepository: andreandrade.azurecr.io/nginx
+  tag: latest
+
+steps:
+- task: Docker@2
+  inputs:
+    command: login
+    containerRegistry: $(containerRegistryServiceConnection)
+
+- task: DownloadSecureFile@1
+  name: privateKey
+  inputs:
+    secureFile: azure-pipe.pub
+- script: |
+    mkdir -p $(DOCKER_CONFIG)/trust/private
+    cp $(privateKey.secureFilePath) $(DOCKER_CONFIG)/trust/private
+
+- task: Docker@2
+  inputs:
+    command: build
+    Dockerfile: '**/Dockerfile'
+    containerRegistry: $(containerRegistryServiceConnection)
+    repository: $(imageRepository)
+    tags: |
+      $(tag)
+    arguments: '--disable-content-trust=false'
+
+- task: Docker@2
+  inputs: 
+    command: push
+    containerRegistry: $(containerRegistryServiceConnection)
+    repository: $(imageRepository)
+    tags: |
+      $(tag)
+    arguments: '--disable-content-trust=false'
+  env:
+    DOCKER_CONTENT_TRUST_REPOSITORY_PASSPHRASE: $(DOCKER_CONTENT_TRUST_REPOSITORY_PASSPHRASE)
