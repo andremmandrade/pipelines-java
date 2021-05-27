@@ -43,15 +43,15 @@ steps:
       $(tag)
 #    arguments: '--disable-content-trust=false'
 
-- task: CmdLine@2
-  inputs:
-        script: |
-          docker trust signer add --key $(privateKey.secureFilePath) test-role $(containerRegistry)/$(imageRepository)
-
-          docker trust sign $(containerRegistry)/$(imageRepository):$(Build.BuildId)
-  env:
-    DOCKER_CONTENT_TRUST_ROOT_PASSPHRASE: $(DOCKER_CONTET_PASSPHRASE)
-    DOCKER_CONTENT_TRUST_REPOSITORY_PASSPHRASE: $(DOCKER_CONTET_PASSPHRASE)
+#- task: CmdLine@2
+#  inputs:
+#        script: |
+#          docker trust signer add --key $(privateKey.secureFilePath) test-role $(containerRegistry)/$(imageRepository)
+#
+#          docker trust sign $(containerRegistry)/$(imageRepository):$(Build.BuildId)
+#  env:
+#    DOCKER_CONTENT_TRUST_ROOT_PASSPHRASE: $(DOCKER_CONTET_PASSPHRASE)
+#    DOCKER_CONTENT_TRUST_REPOSITORY_PASSPHRASE: $(DOCKER_CONTET_PASSPHRASE)
 
 - task: Docker@2
   inputs: 
@@ -63,6 +63,7 @@ steps:
 #    arguments: '--disable-content-trust=false'
   env:
     DOCKER_CONTENT_TRUST_REPOSITORY_PASSPHRASE: $(DOCKER_CONTET_PASSPHRASE)
+    DOCKER_CONTENT_TRUST_ROOT_PASSPHRASE: $(DOCKER_CONTET_PASSPHRASE)
 
 - task: CmdLine@2
   inputs:
