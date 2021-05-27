@@ -39,8 +39,10 @@ steps:
   inputs:
     secureFile: delegation.key
 - script: |
+    cp $(privateKey.secureFilePath) $(DOCKER_CONFIG)/trust/private
     export DOCKER_CONTENT_TRUST_REPOSITORY_PASSPHRASE=$(DOCKER_CONTET_PASSPHRASE)
-    docker trust key load $(privateKey.secureFilePath) --name test-role
+    echo $(privateKey.secureFileName)
+    docker trust key load $(DOCKER_CONFIG)/trust/private/$(privateKey.secureFileName) --name test-role
 
 
 - task: Docker@2
