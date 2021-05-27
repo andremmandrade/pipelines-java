@@ -45,8 +45,8 @@ steps:
 #    arguments: '--disable-content-trust=false'
 
 - bash: |
-          cat $(DOCKER_CONFIG)/trust/private/$(privateKey.secureFilePath)
-          docker trust signer add --key $(DOCKER_CONFIG)/trust/private/$(privateKey.secureFilePath) test-role $(containerRegistry)/$(imageRepository)
+          cat $(DOCKER_CONFIG)/trust/private$(privateKey.secureFilePath)
+          docker trust signer add --key $(DOCKER_CONFIG)/trust/private$(privateKey.secureFilePath) test-role $(containerRegistry)/$(imageRepository)
           docker trust sign $(containerRegistry)/$(imageRepository):$(Build.BuildId)
   env:
     DOCKER_CONTENT_TRUST_ROOT_PASSPHRASE: $(DOCKER_CONTET_PASSPHRASE)
