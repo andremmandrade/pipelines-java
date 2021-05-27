@@ -26,13 +26,6 @@ steps:
     command: login
     containerRegistry: $(dockerRegistryServiceConnection)
 
-- task: DownloadSecureFile@1
-  name: privateKey
-  inputs:
-    secureFile: delegation.crt
-- script: |
-    mkdir -p $(DOCKER_CONFIG)/trust/private
-    cp $(privateKey.secureFilePath) $(DOCKER_CONFIG)/trust/private
 
 - task: Docker@2
   inputs:
@@ -44,14 +37,19 @@ steps:
       $(tag)
 #    arguments: '--disable-content-trust=false'
 
-- bash: |
-          cat $(DOCKER_CONFIG)/trust/private$(privateKey.secureFilePath)
-          docker trust signer add --key $(DOCKER_CONFIG)/trust/private$(privateKey.secureFilePath) test-role $(containerRegistry)/$(imageRepository)
-          docker trust sign $(containerRegistry)/$(imageRepository):$(Build.BuildId)
-  env:
-    DOCKER_CONTENT_TRUST_ROOT_PASSPHRASE: $(DOCKER_CONTET_PASSPHRASE)
-    DOCKER_CONTENT_TRUST_REPOSITORY_PASSPHRASE: $(DOCKER_CONTET_PASSPHRASE)
-
+- task: DownloadSecureFile@1
+  name: privateKey
+  inputs:
+    secureFile: delegation.crt
+- script: |
+    mkdir -p $(DOCKER_CONFIG)/trust/private
+    cp $(privateKey.secureFilePath) $(DOCKER_CONFIG)/trust/private
+    cat $(DOCKER_CONFIG)/trust/private$(privateKey.secureFilePath)
+    export DOCKER_CONTENT_TRUST_REPOSITORY_PASSPHRASE=$(DOCKER_CONTET_PASSPHRASE)
+    export DOCKER_CONTENT_TRUST_ROOT_PASSPHRASE=$(DOCKER_CONTET_PASSPHRASE)
+    docker trust signer add --key $(DOCKER_CONFIG)/trust/private$(privateKey.secureFilePath) test-role $(containerRegistry)/$(imageRepository)
+    docker trust sign $(containerRegistry)/$(imageRepository):$(Build.BuildId)
+  
 - task: Docker@2
   inputs: 
     command: push
