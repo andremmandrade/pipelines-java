@@ -26,7 +26,6 @@ steps:
     command: login
     containerRegistry: $(dockerRegistryServiceConnection)
 
-
 - task: Docker@2
   inputs:
     command: build
