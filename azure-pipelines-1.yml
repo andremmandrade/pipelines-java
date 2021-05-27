@@ -34,16 +34,6 @@ steps:
     mkdir -p $(DOCKER_CONFIG)/trust/private
     cp $(privateCert.secureFilePath) $(DOCKER_CONFIG)/trust/private
 
-- task: DownloadSecureFile@1
-  name: privateKey
-  inputs:
-    secureFile: delegation.key
-- script: |
-    cp $(privateKey.secureFilePath) $(DOCKER_CONFIG)/trust/private
-    export DOCKER_CONTENT_TRUST_REPOSITORY_PASSPHRASE=$(DOCKER_CONTET_PASSPHRASE)
-    sudo chmod 600 $(DOCKER_CONFIG)/trust/private/delegation.key
-    docker trust key load $(DOCKER_CONFIG)/trust/private/delegation.key --name test-role
-
 
 - task: Docker@2
   inputs:
@@ -55,13 +45,19 @@ steps:
       $(tag)
 #    arguments: '--disable-content-trust=false'
 
-- bash: |
-     docker login $(containerRegistry) -u $(DOCKER_USERNAME) -p $(DOCKER_PW)
-     docker trust signer add --key $(DOCKER_CONFIG)/trust/private/delegation.crt test-role $(containerRegistry)/$(imageRepository)
-     docker trust sign $(containerRegistry)/$(imageRepository):$(Build.BuildId)
-  env:
-     DOCKER_CONTENT_TRUST_ROOT_PASSPHRASE: $(DOCKER_CONTET_PASSPHRASE)
-     DOCKER_CONTENT_TRUST_REPOSITORY_PASSPHRASE: $(DOCKER_CONTET_PASSPHRASE)
+- task: DownloadSecureFile@1
+  name: privateKey
+  inputs:
+    secureFile: delegation.key
+- script: |
+    cp $(privateKey.secureFilePath) $(DOCKER_CONFIG)/trust/private
+    export DOCKER_CONTENT_TRUST_REPOSITORY_PASSPHRASE=$(DOCKER_CONTET_PASSPHRASE)
+    export DOCKER_CONTENT_TRUST_ROOT_PASSPHRASE=$(DOCKER_CONTET_PASSPHRASE)
+    sudo chmod 600 $(DOCKER_CONFIG)/trust/private/delegation.key
+    docker login $(containerRegistry) -u $(DOCKER_USERNAME) -p $(DOCKER_PW)
+    docker trust key load $(DOCKER_CONFIG)/trust/private/delegation.key --name test-role
+    docker trust signer add --key $(DOCKER_CONFIG)/trust/private/delegation.crt test-role $(containerRegistry)/$(imageRepository)
+    docker trust sign $(containerRegistry)/$(imageRepository):$(Build.BuildId)
 
 - task: Docker@2
   inputs: 
