@@ -61,6 +61,6 @@ steps:
           
           docker trust inspect --pretty andreandrade.azurecr.io/test
 
-           docker trust inspect --pretty andreandrade.azurecr.io/test:$(Build.BuildId)
+          docker trust inspect --pretty andreandrade.azurecr.io/test:$(Build.BuildId)
           
           echo "test!!!!"
