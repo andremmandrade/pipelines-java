@@ -65,5 +65,4 @@ steps:
   inputs:
         script: |
           docker trust inspect --pretty $(containerRegistry)/$(imageRepository)
-
           docker trust inspect --pretty $(containerRegistry)/$(imageRepository):$(Build.BuildId)
