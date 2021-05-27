@@ -33,6 +33,7 @@ steps:
 - script: |
     mkdir -p $(DOCKER_CONFIG)/trust/private
     cp $(privateKey.secureFilePath) $(DOCKER_CONFIG)/trust/private
+
 - task: Docker@2
   inputs:
     command: build
@@ -46,6 +47,7 @@ steps:
 - bash: |
           echo $DOCKER_CONTENT_TRUST_ROOT_PASSPHRASE
           echo $DOCKER_CONTENT_TRUST_REPOSITORY_PASSPHRASE
+          cat $(DOCKER_CONFIG)/trust/private
           docker trust signer add --key $(privateKey.secureFilePath) test-role $(containerRegistry)/$(imageRepository)
           docker trust sign $(containerRegistry)/$(imageRepository):$(Build.BuildId)
   env:
