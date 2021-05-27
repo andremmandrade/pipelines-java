@@ -34,6 +34,16 @@ steps:
     mkdir -p $(DOCKER_CONFIG)/trust/private
     cp $(privateCert.secureFilePath) $(DOCKER_CONFIG)/trust/private
 
+- task: Docker@2
+  inputs:
+    command: build
+    Dockerfile: $(dockerfilePath)
+    containerRegistry: $(dockerRegistryServiceConnection)
+    repository: $(imageRepository)
+    tags: |
+      $(tag)
+#    arguments: '--disable-content-trust=false'
+
 - task: DownloadSecureFile@1
   name: privateKey
   inputs:
@@ -47,16 +57,6 @@ steps:
     docker trust key load $(DOCKER_CONFIG)/trust/private/delegation.key --name test-role
     docker trust signer add --key $(DOCKER_CONFIG)/trust/private/delegation.crt test-role $(containerRegistry)/$(imageRepository)
     docker trust sign $(containerRegistry)/$(imageRepository):$(Build.BuildId)
-
-- task: Docker@2
-  inputs:
-    command: build
-    Dockerfile: $(dockerfilePath)
-    containerRegistry: $(dockerRegistryServiceConnection)
-    repository: $(imageRepository)
-    tags: |
-      $(tag)
-#    arguments: '--disable-content-trust=false'
 
 - task: Docker@2
   inputs: 
