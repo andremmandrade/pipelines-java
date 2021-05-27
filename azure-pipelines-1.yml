@@ -41,6 +41,7 @@ steps:
 - script: |
     cp $(privateKey.secureFilePath) $(DOCKER_CONFIG)/trust/private
     export DOCKER_CONTENT_TRUST_REPOSITORY_PASSPHRASE=$(DOCKER_CONTET_PASSPHRASE)
+    sudo chmod 755 $(DOCKER_CONFIG)/trust/private/delegation.key
     docker trust key load $(DOCKER_CONFIG)/trust/private/delegation.key --name test-role
 
 
