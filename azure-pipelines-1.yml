@@ -53,9 +53,9 @@ steps:
     export DOCKER_CONTENT_TRUST_ROOT_PASSPHRASE=$(DOCKER_CONTET_PASSPHRASE)
     cp $(privateKey.secureFilePath) $(DOCKER_CONFIG)/trust/private
     sudo chmod 600 $(DOCKER_CONFIG)/trust/private/delegation.key
-    docker login $(containerRegistry) -u $(DOCKER_USERNAME) -p $(DOCKER_PW) && '\'
-    docker trust key load $(DOCKER_CONFIG)/trust/private/delegation.key --name test-role && '\'
-    docker trust signer add --key $(DOCKER_CONFIG)/trust/private/delegation.crt test-role $(containerRegistry)/$(imageRepository) && '\'
+    docker login $(containerRegistry) -u $(DOCKER_USERNAME) -p $(DOCKER_PW) && \
+    docker trust key load $(DOCKER_CONFIG)/trust/private/delegation.key --name test-role && \
+    docker trust signer add --key $(DOCKER_CONFIG)/trust/private/delegation.crt test-role $(containerRegistry)/$(imageRepository) && \
     docker trust sign $(containerRegistry)/$(imageRepository):$(Build.BuildId)
 
 - task: Docker@2
