@@ -29,7 +29,7 @@ steps:
 - task: DownloadSecureFile@1
   name: privateKey
   inputs:
-    secureFile: azure-pipe.pub
+    secureFile: delegation.crt
 - script: |
     mkdir -p $(DOCKER_CONFIG)/trust/private
     cp $(privateKey.secureFilePath) $(DOCKER_CONFIG)/trust/private
