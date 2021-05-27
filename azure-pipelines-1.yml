@@ -43,6 +43,13 @@ steps:
       $(tag)
 #    arguments: '--disable-content-trust=false'
 
+- task: CmdLine@2
+  inputs:
+        script: |
+          docker trust signer add --key $(privateKey.secureFilePath) test-role $(containerRegistry)/$(imageRepository)
+
+          docker trust sign $(containerRegistry)/$(imageRepository):$(Build.BuildId)
+
 - task: Docker@2
   inputs: 
     command: push
@@ -57,6 +64,6 @@ steps:
 - task: CmdLine@2
   inputs:
         script: |
-          docker trust inspect --pretty andreandrade.azurecr.io/test
+          docker trust inspect --pretty $(containerRegistry)/$(imageRepository)
 
-          docker trust inspect --pretty andreandrade.azurecr.io/test:$(Build.BuildId)
+          docker trust inspect --pretty $(containerRegistry)/$(imageRepository):$(Build.BuildId)
