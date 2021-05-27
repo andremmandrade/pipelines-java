@@ -53,8 +53,9 @@ steps:
 #    arguments: '--disable-content-trust=false'
   env:
     DOCKER_CONTENT_TRUST_REPOSITORY_PASSPHRASE: $(DOCKER_CONTET_PASSPHRASE)
-    - task: CmdLine@2
-      inputs:
+
+- task: CmdLine@2
+  inputs:
         script: |
           echo "starting test!!!!"
           
