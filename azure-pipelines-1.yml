@@ -14,7 +14,7 @@ variables:
   imageRepository: 'test'
   containerRegistry: 'andreandrade.azurecr.io'
   dockerfilePath: 'image/Dockerfile'
-  tag: 'latest'
+  tag: '$(Build.BuildId)'
   system.debug: true
 
   # Agent VM image name
@@ -60,5 +60,7 @@ steps:
           echo "starting test!!!!"
           
           docker trust inspect --pretty andreandrade.azurecr.io/test
+
+           docker trust inspect --pretty andreandrade.azurecr.io/test:$(Build.BuildId)
           
           echo "test!!!!"
