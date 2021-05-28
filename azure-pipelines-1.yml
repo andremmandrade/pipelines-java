@@ -52,10 +52,18 @@ steps:
     cp $(privateKey.secureFilePath) $(DOCKER_CONFIG)/trust/private
     sudo chmod 600 $(DOCKER_CONFIG)/trust/private/delegation.key
 
+- task: DownloadSecureFile@1
+  name: privateKeyTarget
+  inputs:
+    secureFile: 485d16e047e90fedb2d83444b52fa0f4239fe03f618e466ea4974ac71f0d31f9.key
+- script: |
+    cp $(privateKeyTarget.secureFilePath) $(DOCKER_CONFIG)/trust/private
+    sudo chmod 600 $(DOCKER_CONFIG)/trust/private/485d16e047e90fedb2d83444b52fa0f4239fe03f618e466ea4974ac71f0d31f9.key
+
 - bash: |
     docker login $(containerRegistry) -u $(DOCKER_USERNAME) -p $(DOCKER_PW)
-    ls $(DOCKER_CONFIG)/trust/private/
-    
+    docker trust key load $(DOCKER_CONFIG)/trust/private/485d16e047e90fedb2d83444b52fa0f4239fe03f618e466ea4974ac71f0d31f9.key --name targets
+    docker trust key load $(DOCKER_CONFIG)/trust/private/delegation.key --name test-role
     docker trust signer add --key $(DOCKER_CONFIG)/trust/private/delegation.crt test-role $(containerRegistry)/$(imageRepository)
     docker trust sign $(containerRegistry)/$(imageRepository):$(Build.BuildId)
   env:
