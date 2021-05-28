@@ -60,19 +60,19 @@ steps:
       $(tag)
 #    arguments: '--disable-content-trust=false'
 
-#- bash: |
-#    docker trust key load $(DOCKER_CONFIG)/trust/private/485d16e047e90fedb2d83444b52fa0f4239fe03f618e466ea4974ac71f0d31f9.key --name targets
-#    docker trust key load $(DOCKER_CONFIG)/trust/private/delegation.key --name test-role
-#    docker trust signer add --key $(DOCKER_CONFIG)/trust/private/delegation.crt test-role $(containerRegistry)/$(imageRepository)
-#    docker trust sign $(containerRegistry)/$(imageRepository):$(Build.BuildId)
-#  env:
-#    DOCKER_CONTENT_TRUST_REPOSITORY_PASSPHRASE: $(DOCKER_CONTET_PASSPHRASE)
-#    DOCKER_CONTENT_TRUST_ROOT_PASSPHRASE: $(DOCKER_CONTET_PASSPHRASE)
+- bash: |
+    docker trust key load $(DOCKER_CONFIG)/trust/private/485d16e047e90fedb2d83444b52fa0f4239fe03f618e466ea4974ac71f0d31f9.key --name targets
+    docker trust key load $(DOCKER_CONFIG)/trust/private/delegation.key --name test-role
+    docker trust signer add --key $(DOCKER_CONFIG)/trust/private/delegation.crt test-role $(containerRegistry)/$(imageRepository)
+    docker trust sign $(containerRegistry)/$(imageRepository):$(Build.BuildId)
+  env:
+    DOCKER_CONTENT_TRUST_REPOSITORY_PASSPHRASE: $(DOCKER_CONTET_PASSPHRASE)
+    DOCKER_CONTENT_TRUST_ROOT_PASSPHRASE: $(DOCKER_CONTET_PASSPHRASE)
 
 
-#- bash: |
-#    docker trust inspect --pretty $(containerRegistry)/$(imageRepository)
-#    docker trust inspect --pretty $(containerRegistry)/$(imageRepository):$(Build.BuildId)
+- bash: |
+    docker trust inspect --pretty $(containerRegistry)/$(imageRepository)
+    docker trust inspect --pretty $(containerRegistry)/$(imageRepository):$(Build.BuildId)
 
 - task: Docker@2
   inputs: 
