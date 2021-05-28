@@ -70,6 +70,10 @@ steps:
 #    DOCKER_CONTENT_TRUST_ROOT_PASSPHRASE: $(DOCKER_CONTET_PASSPHRASE)
 
 
+- bash: |
+    docker trust inspect --pretty $(containerRegistry)/$(imageRepository)
+    docker trust inspect --pretty $(containerRegistry)/$(imageRepository):$(Build.BuildId)
+
 - task: Docker@2
   inputs: 
     command: push
@@ -81,9 +85,3 @@ steps:
   env:
     DOCKER_CONTENT_TRUST_REPOSITORY_PASSPHRASE: $(DOCKER_CONTET_PASSPHRASE)
     DOCKER_CONTENT_TRUST_ROOT_PASSPHRASE: $(DOCKER_CONTET_PASSPHRASE)
-
-- task: CmdLine@2
-  inputs:
-        script: |
-          docker trust inspect --pretty $(containerRegistry)/$(imageRepository)
-          docker trust inspect --pretty $(containerRegistry)/$(imageRepository):$(Build.BuildId)
