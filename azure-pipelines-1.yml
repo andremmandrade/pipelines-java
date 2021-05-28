@@ -70,9 +70,9 @@ steps:
 #    DOCKER_CONTENT_TRUST_ROOT_PASSPHRASE: $(DOCKER_CONTET_PASSPHRASE)
 
 
-- bash: |
-    docker trust inspect --pretty $(containerRegistry)/$(imageRepository)
-    docker trust inspect --pretty $(containerRegistry)/$(imageRepository):$(Build.BuildId)
+#- bash: |
+#    docker trust inspect --pretty $(containerRegistry)/$(imageRepository)
+#    docker trust inspect --pretty $(containerRegistry)/$(imageRepository):$(Build.BuildId)
 
 - task: Docker@2
   inputs: 
