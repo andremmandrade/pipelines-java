@@ -11,7 +11,7 @@ resources:
 variables:
   # Container registry service connection established during pipeline creation
   dockerRegistryServiceConnection: '7cb11741-f734-48ae-959b-44009ae8c9cc'
-  imageRepository: 'test'
+  imageRepository: 'dotnet/core/aspnet'
   containerRegistry: 'andreandrade.azurecr.io'
   dockerfilePath: 'image/Dockerfile'
   tag: '$(Build.BuildId)'
@@ -61,7 +61,6 @@ steps:
 #    arguments: '--disable-content-trust=false'
 
 - bash: |
-    docker login $(containerRegistry) -u $(DOCKER_USERNAME) -p $(DOCKER_PW)
     docker trust key load $(DOCKER_CONFIG)/trust/private/485d16e047e90fedb2d83444b52fa0f4239fe03f618e466ea4974ac71f0d31f9.key --name targets
     docker trust key load $(DOCKER_CONFIG)/trust/private/delegation.key --name test-role
     docker trust signer add --key $(DOCKER_CONFIG)/trust/private/delegation.crt test-role $(containerRegistry)/$(imageRepository)
