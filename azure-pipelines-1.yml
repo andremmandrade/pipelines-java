@@ -55,12 +55,13 @@ steps:
 - bash: |
     docker login $(containerRegistry) -u $(DOCKER_USERNAME) -p $(DOCKER_PW)
     ls $(DOCKER_CONFIG)/trust/private/
-#    docker trust key load $(DOCKER_CONFIG)/trust/private/delegation.key --name test-role
+    
     docker trust signer add --key $(DOCKER_CONFIG)/trust/private/delegation.crt test-role $(containerRegistry)/$(imageRepository)
     docker trust sign $(containerRegistry)/$(imageRepository):$(Build.BuildId)
   env:
     DOCKER_CONTENT_TRUST_REPOSITORY_PASSPHRASE: $(DOCKER_CONTET_PASSPHRASE)
     DOCKER_CONTENT_TRUST_ROOT_PASSPHRASE: $(DOCKER_CONTET_PASSPHRASE)
+
 
 - task: Docker@2
   inputs: 
