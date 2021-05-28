@@ -34,16 +34,6 @@ steps:
     mkdir -p $(DOCKER_CONFIG)/trust/private
     cp $(privateCert.secureFilePath) $(DOCKER_CONFIG)/trust/private
 
-- task: Docker@2
-  inputs:
-    command: build
-    Dockerfile: $(dockerfilePath)
-    containerRegistry: $(dockerRegistryServiceConnection)
-    repository: $(imageRepository)
-    tags: |
-      $(tag)
-#    arguments: '--disable-content-trust=false'
-
 - task: DownloadSecureFile@1
   name: privateKey
   inputs:
@@ -59,6 +49,16 @@ steps:
 - script: |
     cp $(privateKeyTarget.secureFilePath) $(DOCKER_CONFIG)/trust/private
     sudo chmod 600 $(DOCKER_CONFIG)/trust/private/485d16e047e90fedb2d83444b52fa0f4239fe03f618e466ea4974ac71f0d31f9.key
+
+- task: Docker@2
+  inputs:
+    command: build
+    Dockerfile: $(dockerfilePath)
+    containerRegistry: $(dockerRegistryServiceConnection)
+    repository: $(imageRepository)
+    tags: |
+      $(tag)
+#    arguments: '--disable-content-trust=false'
 
 - bash: |
     docker login $(containerRegistry) -u $(DOCKER_USERNAME) -p $(DOCKER_PW)
